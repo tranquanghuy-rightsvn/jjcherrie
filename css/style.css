@@ -1,7 +1,38 @@
 /* PX PUSH clone — design tokens extracted from https://pxpush.com/
-   Font note: Graphik, SemiSqueezed and PP Neue Montreal Mono on the live site
-   are paid/proprietary fonts. We substitute close free equivalents
-   (Inter / Archivo / JetBrains Mono) rather than redistributing those files. */
+   Headline font: Lastik (user-supplied). Body font: Soin Sans Neue (user-supplied).
+   JetBrains Mono still covers the small mono labels (Nº001, timestamps, etc.). */
+
+@font-face {
+  font-family: "Lastik";
+  src: url("../fonts/Lastik-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Soin Sans Neue";
+  src: url("../fonts/Stawix - SoinSansNeue-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Soin Sans Neue";
+  src: url("../fonts/Stawix - SoinSansNeue-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Soin Sans Neue";
+  src: url("../fonts/Stawix - SoinSansNeue-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --bg-lightgrey: #71737d;
@@ -17,8 +48,8 @@
   --chrome-light: #d8dade;
   --chrome-mid: #9a9ea8;
 
-  --font-body: "Inter", Arial, Helvetica, sans-serif;
-  --font-display: "Archivo", Arial, Helvetica, sans-serif;
+  --font-body: "Soin Sans Neue", "Inter", Arial, Helvetica, sans-serif;
+  --font-display: "Lastik", "Archivo", Arial, Helvetica, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --display-tracking: -0.03em;
 
@@ -39,6 +70,7 @@ body {
   background: var(--bg-dark);
   color: var(--text-hero);
   font-family: var(--font-body);
+  font-weight: 500;
   font-size: 16px;
   line-height: 1.5;
   overflow-x: hidden;
@@ -461,7 +493,7 @@ a {
 }
 
 .reveal-text.lead {
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .link-row {
@@ -755,7 +787,7 @@ a {
   padding: 18px 20px;
   background: rgba(255, 255, 255, 0.9);
   color: #111;
-  font-weight: 400;
+  font-weight: 500;
   border-radius: 2px;
   transition: opacity 0.2s ease;
 }
