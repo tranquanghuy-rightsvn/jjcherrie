@@ -48,8 +48,17 @@ body {
   margin: 0;
 }
 
+/* overflow-x: hidden lives ONLY on body, not html: setting it on BOTH makes
+   overflow-y compute to auto on both (CSS overflow-x/y are interdependent —
+   a non-visible value on one axis forces the other to auto if it would
+   otherwise be visible), turning body into a second, independently
+   scrollable box nested inside html's viewport scroller. Since the user only
+   ever scrolls html (the documentElement), body's own scrollTop never
+   moves — and every position:sticky element in the page computes its stuck
+   range against THAT frozen frame of reference, so it never engages. */
 body {
   background: var(--pink-bg);
+  overflow-x: hidden;
   font-family: var(--font-body);
 }
 
@@ -67,7 +76,6 @@ a {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
-  border-top: 3px solid #171717;
 }
 
 .hero__branchWrap {
@@ -218,22 +226,9 @@ a {
   display: block;
 }
 
-.hero__logo-mark {
-  font-family: var(--font-display);
-  color: #fff;
-  font-size: clamp(28px, 3.2vw, 46px);
-  line-height: 0.85;
-  letter-spacing: -0.01em;
-}
-
-.hero__logo-mark .lower,
-.hero__logo-mark .cap {
-  font-weight: 700;
-}
-
-.hero__logo-word {
+.hero__logo-img {
+  display: block;
   width: clamp(90px, 9vw, 140px);
-  margin-top: 2px;
 }
 
 .hero__intro {
@@ -257,25 +252,29 @@ a {
 
 .hero__pageContent {
   position: absolute;
-  left: 3.4%;
-  right: 3.4%;
-  top: 16%;
+  left: 40px;
+  right: 40px;
+  top: 22%;
   bottom: 6%;
   z-index: 3;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
 .about__grid {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1fr;
+  height: 100%;
   gap: 60px;
-  align-items: start;
 }
 
 .about__sidebar {
   display: flex;
   flex-direction: column;
   gap: 34px;
+  grid-column: 1 / 2;
+  min-width: 0;
 }
 
 .about__block h3 {
@@ -301,12 +300,198 @@ a {
 }
 
 .about__bio {
+  grid-column: 2 / 4;
   color: #fff;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(22px, 3vw, 40px);
+  font-size: clamp(16px, 1.6vw, 24px);
   line-height: 1.35;
   letter-spacing: -0.005em;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+.about__bio::-webkit-scrollbar {
+  width: 5px;
+}
+
+.about__bio::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.about__bio::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+}
+
+/* Contact page: no bio/grid, just a giant wordmark front and center plus a
+   footer bar of contact details anchored near the bottom edge — mirrors the
+   nav row's top band with a matching band at the bottom. */
+.contact__brand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(56px, 16vw, 260px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.contact__footer {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 4%;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0;
+}
+
+.contact__footer span,
+.contact__footer a {
+  color: var(--cream-text);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13.5px;
+  text-decoration: none;
+}
+
+.contact__footer a:hover {
+  text-decoration: underline;
+}
+
+.work__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 60px;
+}
+
+.work__spacer {
+  grid-column: 1;
+}
+
+.work__intro {
+  grid-column: 2 / 4;
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(33px, 4.2vw, 60px);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+}
+
+/* The two "shaped by..." / "built with..." phrases are the core claim, so
+   they fade in first (1s); the connective framing words around them ("A
+   collection of...", "Every project here was") stay hidden longer, fading
+   in after (2s). */
+.work__fade {
+  opacity: 0;
+  animation: work-fade-in 0.6s ease forwards;
+}
+
+.work__fade--early {
+  animation-delay: 1s;
+}
+
+.work__fade--late {
+  animation-delay: 2s;
+}
+
+@keyframes work-fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Lives OUTSIDE .hero (a sibling section, normal document flow) instead of
+   inside .hero__pageContent — .hero's other children are all
+   position:absolute, so .hero itself never grows past its fixed
+   min-height:100vh no matter how much content is layered inside it. A
+   6-project list is much taller than that, so it needs to push the page
+   taller and scroll normally, not get trapped in a small clipped/internal
+   scrollbox on top of the flower art. */
+/* Small top padding on purpose: the sticky-stacking cards need to start
+   sticking as soon as possible after the hero (where the nav row lives) —
+   a big empty gap here would burn scroll distance before the first card
+   ever reaches the top of the viewport, so most of the stacking/shrinking
+   would happen off-screen or be over before the user notices it. */
+.work__listSection {
+  background: var(--pink-bg);
+  padding: 24px 40px 80px;
+}
+
+.work__list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Sticky stacking cards (see ux.html's "7.2 Sticky stacking cards" demo):
+   each card is position:sticky, and js/work-stack.js gives every card a
+   `top` staggered by ~1/5 of the PREVIOUS card's own height — so once a
+   later card stacks over an earlier one, the earlier card's top ~20% (its
+   meta + title) still peeks out above it instead of being fully hidden.
+   The script also shrinks each card slightly as the next one approaches,
+   including the last card (shrinks against the list's own bottom edge
+   instead of being left full-size forever on top of the whole pile). */
+.work__itemCard {
+  position: sticky;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 36px;
+  background: var(--pink-bg);
+  border-radius: 16px;
+  will-change: transform;
+  transform-origin: top center;
+}
+
+.work__itemMeta {
+  margin: 0;
+  color: var(--cream-text);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13.5px;
+  opacity: 0.75;
+}
+
+.work__itemTitle {
+  margin: 0 0 14px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 2vw, 28px);
+  letter-spacing: -0.01em;
+}
+
+.work__itemDesc {
+  margin: 0;
+  color: var(--cream-text);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.work__itemMedia img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
 }
 
 .about__bio p {
@@ -371,18 +556,18 @@ a {
 }
 
 .hero__navBtn--about {
-  left: 44.9%;
-  top: 46.9%;
+  left: 47.9%;
+  top: 37.5%;
 }
 
 .hero__navBtn--contact {
-  left: 74.3%;
-  top: 50.1%;
+  left: 62.7%;
+  top: 64.2%;
 }
 
 .hero__navBtn--work {
-  left: 62.7%;
-  top: 64.2%;
+  left: 74.7%;
+  top: 45%;
 }
 
 /* Same names on every page = the browser morphs each button from its old
@@ -410,12 +595,12 @@ a {
 }
 
 .hero--sub .hero__navBtn--contact {
-  left: 57%;
+  left: 69%;
   top: 4.5%;
 }
 
 .hero--sub .hero__navBtn--work {
-  left: 69%;
+  left: 57%;
   top: 4.5%;
 }
 
@@ -430,6 +615,14 @@ a {
 .hero__navBtn--plain:hover {
   box-shadow: none;
 }
+
+/* Per-role names (above) are the default/fallback for every button on every
+   page — this alone is what makes Home -> subpage fly correctly. Whenever a
+   subpage's current button instead needs the shared "nav-current" name (so
+   it slides between two subpages, since same-role position never changes
+   subpage-to-subpage), js/nav-transition.js overrides it with an inline
+   style, dynamically, only for that specific navigation — see that file for
+   why this can't be done with CSS alone. */
 
 .hero__headline {
   position: absolute;
@@ -468,13 +661,13 @@ a {
   }
 
   .hero__navBtn--contact {
-    top: 46%;
-    left: 68%;
+    top: 55%;
+    left: 52%;
   }
 
   .hero__navBtn--work {
-    top: 55%;
-    left: 52%;
+    top: 46%;
+    left: 68%;
   }
 
   .hero__headline {
@@ -493,11 +686,22 @@ a {
   }
 
   .hero--sub .hero__navBtn--contact {
-    left: 55%;
+    left: 74%;
   }
 
   .hero--sub .hero__navBtn--work {
-    left: 74%;
+    left: 55%;
+  }
+
+  .contact__brand {
+    font-size: clamp(36px, 16vw, 96px);
+  }
+
+  .contact__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    bottom: 3%;
   }
 
   .hero__pageContent {
@@ -506,7 +710,46 @@ a {
 
   .about__grid {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    height: auto;
     gap: 32px;
+  }
+
+  .about__sidebar {
+    grid-column: 1;
+  }
+
+  .about__bio {
+    grid-column: 1;
+    overflow-y: visible;
+  }
+
+  .work__grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .work__spacer {
+    display: none;
+  }
+
+  .work__intro {
+    grid-column: 1;
+  }
+
+  .work__listSection {
+    padding: 24px 20px 60px;
+  }
+
+  /* Sticky-stacking shrink relies on scroll-driven transforms, which read as
+     janky/fiddly on small touch screens — mobile just gets a plain,
+     non-sticky, single-column list of full-size cards instead. */
+  .work__itemCard {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 24px;
+    transform: none !important;
   }
 }
 
@@ -531,13 +774,13 @@ a {
   }
 
   .hero__navBtn--contact {
-    top: 40%;
-    left: 62%;
+    top: 47%;
+    left: 40%;
   }
 
   .hero__navBtn--work {
-    top: 47%;
-    left: 40%;
+    top: 40%;
+    left: 62%;
   }
 
   .hero__headline {

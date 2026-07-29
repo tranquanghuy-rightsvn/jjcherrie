@@ -11,8 +11,8 @@
      silently skipped on a cold/first navigation to a page, but work
      consistently once it's been fetched once. Pure HTML, no JS. -->
 <link rel="prefetch" href="about/" />
-<link rel="prefetch" href="work/" />
 <link rel="prefetch" href="contact/" />
+<link rel="prefetch" href="work/" />
 <!-- Speculation Rules: a declarative JSON hint (no imperative JS logic) that
      tells Chrome to fully render the nav target in the background the moment
      the pointer hovers/presses on it — a beat before the real click lands.
@@ -74,8 +74,7 @@
   </div>
 
   <a href="index.html" class="hero__logo">
-    <div class="hero__logo-mark"><span class="lower">j</span><span class="cap">CH</span></div>
-    <img class="hero__logo-word" src="images/home/text-logo.png" alt="jjcherrie" />
+    <img class="hero__logo-img" src="images/home/logo.png" alt="jjcherrie" />
   </a>
 
   <p class="hero__intro" id="introTyped">I'm Linh Nguyen, a graphic designer and illustrator . I turn complex ideas into clear, playful, and human-centric digital experiences. Outside work, I make visual journal to keep the creativity flowing.</p>
@@ -84,8 +83,8 @@
 
   <nav class="hero__nav">
     <a href="about/" class="hero__navBtn hero__navBtn--about"><span class="scramble">About</span></a>
-    <a href="contact/" class="hero__navBtn hero__navBtn--contact"><span class="scramble">Contact</span></a>
     <a href="work/" class="hero__navBtn hero__navBtn--work"><span class="scramble">Work</span></a>
+    <a href="contact/" class="hero__navBtn hero__navBtn--contact"><span class="scramble">Contact</span></a>
   </nav>
 </section>
 
