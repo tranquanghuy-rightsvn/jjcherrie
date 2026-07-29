@@ -221,14 +221,14 @@ a {
 .hero__logo {
   position: absolute;
   left: 3.4%;
-  top: 2.8%;
+  top: 2%;
   z-index: 3;
   display: block;
 }
 
 .hero__logo-img {
   display: block;
-  width: clamp(90px, 9vw, 140px);
+  width: clamp(90px, 9vw, 50px);
 }
 
 .hero__intro {
@@ -297,6 +297,8 @@ a {
 
 .about__period {
   opacity: 0.75;
+  text-decoration: underline;
+  text-decoration-color: yellow;
 }
 
 .about__bio {
@@ -304,7 +306,7 @@ a {
   color: #fff;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(16px, 1.6vw, 24px);
+  font-size: clamp(30px, 3.2vw, 40px);
   line-height: 1.35;
   letter-spacing: -0.005em;
   min-width: 0;
@@ -342,7 +344,7 @@ a {
   color: #fff;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(56px, 16vw, 260px);
+  font-size: clamp(56px, 25vw, 360px);
   line-height: 1;
   letter-spacing: -0.01em;
   text-align: center;
@@ -531,7 +533,7 @@ a {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(13px, 1.1vw, 16px);
-  padding: 0.5em 1.1em;
+  padding: 0.5em 25px;
   margin: 0;
   border-radius: 2px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
@@ -540,7 +542,7 @@ a {
 
 .hero__navBtn:hover {
   /* grows 2px outward on every side while staying centered on the same spot */
-  padding: calc(0.5em + 2px) calc(1.1em + 2px);
+  padding: calc(0.5em + 2px) calc(25px + 2px);
   margin: -2px;
   box-shadow: 0 10px 18px rgba(0, 0, 0, 0.24);
 }
