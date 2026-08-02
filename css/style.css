@@ -6,6 +6,26 @@
   navigation: auto;
 }
 
+/* Work page only: js/cursor-trail.js drops one of these at the pointer's
+   position on every big-enough mouse move, then fades it out at full size —
+   the fading squares left behind read as a pixelated cursor trail. */
+.work__cursorTrail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  background: var(--green-btn);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: opacity 1s ease;
+}
+
+.work__cursorTrail--fade {
+  opacity: 0;
+}
+
 @font-face {
   font-family: "Lastik";
   src: url("../fonts/Lastik-Regular.otf") format("opentype");
@@ -32,6 +52,7 @@
 
 :root {
   --pink-bg: #db629e;
+  --pink-light: #fbdce9;
   --green-btn: #a6d44c;
   --green-btn-text: #ffffff;
   --cream-text: #fbf7ef;
@@ -275,11 +296,12 @@ a {
   gap: 34px;
   grid-column: 1 / 2;
   min-width: 0;
+  opacity: 0.75;
 }
 
 .about__block h3 {
   margin: 0 0 10px;
-  color: #fff;
+  color: var(--cream-text);
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 20px;
@@ -293,12 +315,6 @@ a {
   font-weight: 500;
   font-size: 13.5px;
   line-height: 1.6;
-}
-
-.about__period {
-  opacity: 0.75;
-  text-decoration: underline;
-  text-decoration-color: yellow;
 }
 
 .about__bio {
@@ -335,19 +351,13 @@ a {
    nav row's top band with a matching band at the bottom. */
 .contact__brand {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   z-index: 3;
   margin: 0;
-  color: #fff;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: clamp(56px, 25vw, 360px);
-  line-height: 1;
-  letter-spacing: -0.01em;
-  text-align: center;
+  width: min(92vw, 1500px);
+  height: auto;
 }
 
 .contact__footer {
@@ -397,19 +407,12 @@ a {
 }
 
 /* The two "shaped by..." / "built with..." phrases are the core claim, so
-   they fade in first (1s); the connective framing words around them ("A
-   collection of...", "Every project here was") stay hidden longer, fading
-   in after (2s). */
-.work__fade {
-  opacity: 0;
-  animation: work-fade-in 0.6s ease forwards;
-}
-
-.work__fade--early {
-  animation-delay: 1s;
-}
-
+   they stay fully visible the whole time; the connective framing words
+   around them ("A collection of...", "Every project here was") start
+   almost hidden (0.1 opacity) and fade in after (2s). */
 .work__fade--late {
+  opacity: 0.1;
+  animation: work-fade-in 0.6s ease forwards;
   animation-delay: 2s;
 }
 
@@ -494,6 +497,237 @@ a {
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: 4px;
+  cursor: pointer;
+}
+
+/* js/work-modal.js toggles this on <body> while the panel is open, so the
+   page underneath can't scroll along with it. */
+.work__bodyLocked {
+  overflow: hidden;
+}
+
+/* Clicking a work thumbnail opens this fixed-position detail panel, pinned
+   at top:100px/left:100px per spec, above everything else on the page.
+   js/work-modal.js fills in its text/image and toggles the `hidden`
+   attribute. */
+.work__modal {
+  position: fixed;
+  top: 100px;
+  left: 300px;
+  right: 50px;
+  z-index: 9999;
+  height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  /* CSS animations (unlike transitions) restart on their own whenever the
+     element goes from display:none back to visible, so this just replays
+     every time js/work-modal.js clears the `hidden` attribute — no extra
+     JS needed to trigger it. */
+  animation: work-modal-in 0.4s ease;
+}
+
+@keyframes work-modal-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.work__modal[hidden] {
+  display: none;
+}
+
+.work__modal::-webkit-scrollbar {
+  display: none;
+}
+
+/* Holds the background + hole-punch mask + padding together with the text/
+   image, so the "paper" (and its holes) scrolls as one piece instead of the
+   holes staying fixed to the viewport while the content scrolls past them. */
+.work__modalPaper {
+  min-height: 100%;
+  /* Random fleck/grain texture (SVG feTurbulence noise, not a repeating dot
+     grid) blended over the flat pink so the panel reads as textured paper
+     instead of a solid color card. */
+  background-color: var(--pink-light);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-blend-mode: multiply;
+  padding: 40px 200px 140px 200px;
+  /* Ring-binder look: a column of circular cutouts through the left margin
+     that let whatever is behind the panel show through, instead of just a
+     solid strip of background color. Extends 100px past the last piece of
+     content (via the extra bottom padding above) so the perforation runs
+     off the end like a real strip instead of stopping abruptly. */
+  mask-image: radial-gradient(circle 12px at 30px 100px, transparent 12px, black 13px);
+  mask-repeat: repeat-y;
+  mask-size: 100% 200px;
+  -webkit-mask-image: radial-gradient(circle 12px at 30px 100px, transparent 12px, black 13px);
+  -webkit-mask-repeat: repeat-y;
+  -webkit-mask-size: 100% 200px;
+}
+
+.work__modalClose {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 72px;
+  height: 72px;
+  border: none;
+  border-radius: 50%;
+  background: #262626;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.work__modalClose:hover {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Custom X built from two bars crossing at 90° (instead of a text glyph)
+   so it stays crisp at this larger size and rotates cleanly on hover. */
+.work__modalClose::before,
+.work__modalClose::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56px;
+  height: 2px;
+  background: #f2f2f2;
+  border-radius: 1px;
+}
+
+.work__modalClose::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.work__modalClose::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Coded to look like the reference document-memo header (header-paper.png)
+   — a row of labeled fields between two rules, a rotated "stamped" doc
+   number, and a dark circular close button standing in for its X — built
+   with real markup instead of embedding that reference image. */
+.work__modalHeader {
+  position: relative;
+  /* Bleeds past the paper's own side padding: flush to the paper's right
+     edge, but only 50px in from its left edge (asymmetric on purpose, so
+     the close button sits in the wide right-hand gutter, outside the
+     table rules below). */
+  width: calc(100% + 350px);
+  margin: 0 0 24px -150px;
+  padding: 0 100px 0 50px;
+}
+
+.work__modalHeaderFields {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border-top: 1px solid rgba(43, 36, 33, 0.35);
+  border-bottom: 1px solid rgba(43, 36, 33, 0.35);
+}
+
+.work__modalField {
+  position: relative;
+  min-width: 0;
+  /* Fixed row height (not content-driven) so the column divider runs the
+     full height of the row, flush against the table's own top/bottom
+     rules — a real table-cell look. Kept short enough that the table's
+     own border-bottom crosses through the Document Number stamp (rather
+     than pushing that stamp further down to reach a taller border). */
+  min-height: 115px;
+  padding: 20px 24px;
+}
+
+/* Table-style column dividers between fields — no border on the two
+   outermost edges, only between columns. */
+.work__modalField + .work__modalField {
+  border-left: 1px solid rgba(43, 36, 33, 0.35);
+}
+
+.work__modalFieldLabel {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(43, 36, 33, 0.55);
+}
+
+.work__modalFieldValue {
+  /* Positioned a fixed distance from the table's own top edge (not from
+     the sibling label) so every column's value lines up on the same row
+     regardless of how tall that column's label happens to be. */
+  position: absolute;
+  top: 80px;
+  left: 24px;
+  right: 24px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 14px;
+  color: #2b2421;
+}
+
+.work__modalSubject {
+  font-weight: 300;
+}
+
+.work__modalDocNo {
+  display: inline-block;
+  z-index: 2;
+  width: fit-content;
+  padding: 2px 10px;
+  border: 2px solid #c0432f;
+  border-radius: 4px;
+  color: #c0432f;
+  font-size: 28px;
+  font-weight: 700;
+  transform: rotate(-10deg);
+}
+
+.work__modalImg {
+  width: 520px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 4.5;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-top: 30px;
+  margin-bottom: 16px;
+  padding-bottom: 300px;
+}
+
+.work__modalMeta {
+  margin: 150px 0 6px;
+  color: #7a3f57;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 64px;
+  opacity: 0.75;
+}
+
+.work__modalTitle {
+  margin: 40px 0 10px;
+  color: #2b2b2b;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 42px;
+  letter-spacing: -0.01em;
+}
+
+.work__modalDesc {
+  margin: 0;
+  color: #3a2430;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 21px;
+  line-height: 1.6;
 }
 
 .about__bio p {
@@ -563,13 +797,13 @@ a {
 }
 
 .hero__navBtn--contact {
-  left: 62.7%;
-  top: 64.2%;
+  left: 74.7%;
+  top: 45%;
 }
 
 .hero__navBtn--work {
-  left: 74.7%;
-  top: 45%;
+  left: 62.7%;
+  top: 64.2%;
 }
 
 /* Same names on every page = the browser morphs each button from its old
@@ -663,13 +897,13 @@ a {
   }
 
   .hero__navBtn--contact {
-    top: 55%;
-    left: 52%;
+    top: 46%;
+    left: 68%;
   }
 
   .hero__navBtn--work {
-    top: 46%;
-    left: 68%;
+    top: 55%;
+    left: 52%;
   }
 
   .hero__headline {
@@ -696,7 +930,7 @@ a {
   }
 
   .contact__brand {
-    font-size: clamp(36px, 16vw, 96px);
+    width: min(85vw, 640px);
   }
 
   .contact__footer {
@@ -776,13 +1010,13 @@ a {
   }
 
   .hero__navBtn--contact {
-    top: 47%;
-    left: 40%;
+    top: 40%;
+    left: 62%;
   }
 
   .hero__navBtn--work {
-    top: 40%;
-    left: 62%;
+    top: 47%;
+    left: 40%;
   }
 
   .hero__headline {

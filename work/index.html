@@ -136,7 +136,43 @@
   </div>
 </section>
 
+<div class="work__modal" id="workModal" hidden>
+  <div class="work__modalPaper">
+    <div class="work__modalHeader">
+      <div class="work__modalHeaderFields">
+        <div class="work__modalField">
+          <span class="work__modalFieldLabel">Document Number</span>
+          <span class="work__modalFieldValue work__modalDocNo"></span>
+        </div>
+        <div class="work__modalField">
+          <span class="work__modalFieldLabel">Subject of Record</span>
+          <span class="work__modalFieldValue work__modalSubject"></span>
+        </div>
+        <div class="work__modalField">
+          <span class="work__modalFieldLabel">Prepared By</span>
+          <span class="work__modalFieldValue">Linh Nguyen</span>
+        </div>
+        <div class="work__modalField">
+          <span class="work__modalFieldLabel">Date Filed</span>
+          <span class="work__modalFieldValue work__modalDate"></span>
+        </div>
+        <div class="work__modalField">
+          <span class="work__modalFieldLabel">Classification</span>
+          <span class="work__modalFieldValue">Internal Cultural Memorandum</span>
+        </div>
+      </div>
+      <button type="button" class="work__modalClose" aria-label="Close"></button>
+    </div>
+    <p class="work__modalMeta"></p>
+    <h3 class="work__modalTitle"></h3>
+    <p class="work__modalDesc"></p>
+    <img class="work__modalImg" src="" alt="" />
+  </div>
+</div>
+
 <script src="../js/nav-transition.js"></script>
 <script src="../js/work-stack.js"></script>
+<script src="../js/work-modal.js"></script>
+<script src="../js/cursor-trail.js"></script>
 </body>
 </html>
