@@ -397,13 +397,28 @@ a {
    nav row's top band with a matching band at the bottom. */
 .contact__brand {
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
   z-index: 3;
   margin: 0;
-  width: min(92vw, 1500px);
-  height: auto;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(56px, 25vw, 360px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.contact__brand .letter {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.contact__brand .letter:hover {
+  transform: translateY(-0.18em);
 }
 
 .contact__footer {
@@ -906,7 +921,7 @@ a {
   }
 
   .contact__brand {
-    width: min(85vw, 640px);
+    font-size: clamp(36px, 16vw, 96px);
   }
 
   .contact__footer {
