@@ -64,7 +64,16 @@
     <a href="./" class="hero__navBtn hero__navBtn--work">Work</a>
     <a href="../contact/" class="hero__navBtn hero__navBtn--contact hero__navBtn--plain">Contact</a>
   </nav>
+
 </section>
+
+<!-- Sits outside .hero on purpose: that section has overflow:hidden (for
+     the branch graphic), which would clip this fixed-position hint even
+     though "fixed" is meant to escape normal ancestor clipping. -->
+<div class="work__scrollHint" id="workScrollHint" aria-hidden="true">
+  <span class="work__scrollHintChevron"></span>
+  <span class="work__scrollHintChevron"></span>
+</div>
 
 <section class="work__listSection">
   <div class="work__list" id="workList">
@@ -138,41 +147,15 @@
 
 <div class="work__modal" id="workModal" hidden>
   <div class="work__modalPaper">
-    <div class="work__modalHeader">
-      <div class="work__modalHeaderFields">
-        <div class="work__modalField">
-          <span class="work__modalFieldLabel">Document Number</span>
-          <span class="work__modalFieldValue work__modalDocNo"></span>
-        </div>
-        <div class="work__modalField">
-          <span class="work__modalFieldLabel">Subject of Record</span>
-          <span class="work__modalFieldValue work__modalSubject"></span>
-        </div>
-        <div class="work__modalField">
-          <span class="work__modalFieldLabel">Prepared By</span>
-          <span class="work__modalFieldValue">Linh Nguyen</span>
-        </div>
-        <div class="work__modalField">
-          <span class="work__modalFieldLabel">Date Filed</span>
-          <span class="work__modalFieldValue work__modalDate"></span>
-        </div>
-        <div class="work__modalField">
-          <span class="work__modalFieldLabel">Classification</span>
-          <span class="work__modalFieldValue">Internal Cultural Memorandum</span>
-        </div>
-      </div>
-      <button type="button" class="work__modalClose" aria-label="Close"></button>
-    </div>
-    <p class="work__modalMeta"></p>
-    <h3 class="work__modalTitle"></h3>
-    <p class="work__modalDesc"></p>
-    <img class="work__modalImg" src="" alt="" />
+    <button type="button" class="work__modalClose" aria-label="Close"></button>
+    <div class="work__modalGallery" id="workModalGallery"></div>
   </div>
 </div>
 
 <script src="../js/nav-transition.js"></script>
 <script src="../js/work-stack.js"></script>
 <script src="../js/work-modal.js"></script>
+<script src="../js/scroll-hint.js"></script>
 <script src="../js/cursor-trail.js"></script>
 </body>
 </html>

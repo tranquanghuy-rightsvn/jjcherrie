@@ -9,13 +9,13 @@
 
   function spawnAt(x, y) {
     var square = document.createElement("div");
-    square.className = "work__cursorTrail";
+    square.className = "cursorTrail";
     square.style.left = x + "px";
     square.style.top = y + "px";
     document.body.appendChild(square);
 
     requestAnimationFrame(function () {
-      square.classList.add("work__cursorTrail--fade");
+      square.classList.add("cursorTrail--fade");
     });
 
     setTimeout(function () {

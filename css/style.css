@@ -6,10 +6,10 @@
   navigation: auto;
 }
 
-/* Work page only: js/cursor-trail.js drops one of these at the pointer's
-   position on every big-enough mouse move, then fades it out at full size —
-   the fading squares left behind read as a pixelated cursor trail. */
-.work__cursorTrail {
+/* Site-wide: js/cursor-trail.js drops one of these at the pointer's
+   position on every mouse move, then fades it out at full size — the
+   fading squares left behind read as a pixelated cursor trail. */
+.cursorTrail {
   position: fixed;
   left: 0;
   top: 0;
@@ -22,8 +22,54 @@
   transition: opacity 1s ease;
 }
 
-.work__cursorTrail--fade {
+.cursorTrail--fade {
   opacity: 0;
+}
+
+/* Work page: hints there's more to scroll to below the hero. Fixed near
+   the bottom of the first screen; js/scroll-hint.js hides it (via
+   .is-hidden) once .work__listSection scrolls into view. */
+.work__scrollHint {
+  position: fixed;
+  right: 15vw;
+  bottom: 40px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.work__scrollHint.is-hidden {
+  opacity: 0;
+}
+
+/* A single rotated square's bottom-right corner — the two border sides
+   share that corner exactly, so they always meet with no gap (the old
+   two-separate-bars version could drift apart at the joint). */
+.work__scrollHintChevron {
+  width: 28px;
+  height: 28px;
+  margin: -4px 0;
+  border-bottom: 4px solid rgba(255, 255, 255, 0.85);
+  border-right: 4px solid rgba(255, 255, 255, 0.85);
+  border-radius: 0 0 2px 0;
+  transform: rotate(45deg);
+  animation: work-scroll-bounce 1.4s ease-in-out infinite;
+}
+
+@keyframes work-scroll-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(45deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(8px) rotate(45deg);
+    opacity: 1;
+  }
 }
 
 @font-face {
@@ -401,7 +447,7 @@ a {
   color: #fff;
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(33px, 4.2vw, 60px);
+  font-size: clamp(30px, 3.2vw, 40px);
   line-height: 1.3;
   letter-spacing: -0.005em;
 }
@@ -498,6 +544,14 @@ a {
   object-fit: cover;
   border-radius: 4px;
   cursor: pointer;
+  /* transform (not width/height) so the zoom can't push surrounding
+     content around — it's purely visual, layout is untouched. Default
+     transform-origin (center) makes it grow evenly in all 4 directions. */
+  transition: transform 0.3s ease;
+}
+
+.work__itemMedia img:hover {
+  transform: scale(1.025);
 }
 
 /* js/work-modal.js toggles this on <body> while the panel is open, so the
@@ -536,6 +590,22 @@ a {
   }
 }
 
+/* js/work-modal.js adds this on close instead of hiding immediately, waits
+   for the animation to finish (animationend), then sets `hidden`. Mirrors
+   work-modal-in exactly, just backwards. */
+.work__modal.is-closing {
+  animation: work-modal-out 0.4s ease forwards;
+}
+
+@keyframes work-modal-out {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
 .work__modal[hidden] {
   display: none;
 }
@@ -556,7 +626,7 @@ a {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-blend-mode: multiply;
-  padding: 40px 200px 140px 200px;
+  padding: 40px 20px 140px 200px;
   /* Ring-binder look: a column of circular cutouts through the left margin
      that let whatever is behind the panel show through, instead of just a
      solid strip of background color. Extends 100px past the last piece of
@@ -572,21 +642,19 @@ a {
 
 .work__modalClose {
   position: absolute;
-  top: 50%;
-  right: 14px;
-  transform: translateY(-50%);
+  top: 20px;
+  right: 20px;
   z-index: 1;
   width: 72px;
   height: 72px;
   border: none;
-  border-radius: 50%;
-  background: #262626;
+  background: none;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
 
 .work__modalClose:hover {
-  transform: translateY(-50%) rotate(180deg);
+  transform: rotate(180deg);
 }
 
 /* Custom X built from two bars crossing at 90° (instead of a text glyph)
@@ -599,7 +667,7 @@ a {
   left: 50%;
   width: 56px;
   height: 2px;
-  background: #f2f2f2;
+  background: var(--pink-bg);
   border-radius: 1px;
 }
 
@@ -611,123 +679,31 @@ a {
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 
-/* Coded to look like the reference document-memo header (header-paper.png)
-   — a row of labeled fields between two rules, a rotated "stamped" doc
-   number, and a dark circular close button standing in for its X — built
-   with real markup instead of embedding that reference image. */
-.work__modalHeader {
-  position: relative;
-  /* Bleeds past the paper's own side padding: flush to the paper's right
-     edge, but only 50px in from its left edge (asymmetric on purpose, so
-     the close button sits in the wide right-hand gutter, outside the
-     table rules below). */
-  width: calc(100% + 350px);
-  margin: 0 0 24px -150px;
-  padding: 0 100px 0 50px;
+/* js/work-modal.js fills this with one <img class="work__modalImg"> per
+   asset for the clicked work, grouped into rows: a full-width image, then
+   a row of 2 half-width images, repeating. */
+.work__modalGallery {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 200px;
 }
 
-.work__modalHeaderFields {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  border-top: 1px solid rgba(43, 36, 33, 0.35);
-  border-bottom: 1px solid rgba(43, 36, 33, 0.35);
-}
-
-.work__modalField {
-  position: relative;
-  min-width: 0;
-  /* Fixed row height (not content-driven) so the column divider runs the
-     full height of the row, flush against the table's own top/bottom
-     rules — a real table-cell look. Kept short enough that the table's
-     own border-bottom crosses through the Document Number stamp (rather
-     than pushing that stamp further down to reach a taller border). */
-  min-height: 115px;
-  padding: 20px 24px;
-}
-
-/* Table-style column dividers between fields — no border on the two
-   outermost edges, only between columns. */
-.work__modalField + .work__modalField {
-  border-left: 1px solid rgba(43, 36, 33, 0.35);
-}
-
-.work__modalFieldLabel {
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(43, 36, 33, 0.55);
-}
-
-.work__modalFieldValue {
-  /* Positioned a fixed distance from the table's own top edge (not from
-     the sibling label) so every column's value lines up on the same row
-     regardless of how tall that column's label happens to be. */
-  position: absolute;
-  top: 80px;
-  left: 24px;
-  right: 24px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 14px;
-  color: #2b2421;
-}
-
-.work__modalSubject {
-  font-weight: 300;
-}
-
-.work__modalDocNo {
-  display: inline-block;
-  z-index: 2;
-  width: fit-content;
-  padding: 2px 10px;
-  border: 2px solid #c0432f;
-  border-radius: 4px;
-  color: #c0432f;
-  font-size: 28px;
-  font-weight: 700;
-  transform: rotate(-10deg);
+.work__modalImgRow {
+  display: flex;
+  gap: 15px;
 }
 
 .work__modalImg {
-  width: 520px;
-  max-width: 100%;
+  display: block;
+  width: 100%;
   height: auto;
-  aspect-ratio: 4 / 4.5;
-  object-fit: cover;
   border-radius: 4px;
-  margin-top: 30px;
-  margin-bottom: 16px;
-  padding-bottom: 300px;
 }
 
-.work__modalMeta {
-  margin: 150px 0 6px;
-  color: #7a3f57;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 64px;
-  opacity: 0.75;
-}
-
-.work__modalTitle {
-  margin: 40px 0 10px;
-  color: #2b2b2b;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 42px;
-  letter-spacing: -0.01em;
-}
-
-.work__modalDesc {
-  margin: 0;
-  color: #3a2430;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 21px;
-  line-height: 1.6;
+.work__modalImgRow .work__modalImg {
+  flex: 1;
+  min-width: 0;
 }
 
 .about__bio p {
