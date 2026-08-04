@@ -41,9 +41,17 @@
     [
       // work05's card thumbnail (images/work 05/thumb.png) isn't one of the
       // webcontent assets — pulled in from its real location just to lead
-      // the gallery, same as the others do with their own thumb.
+      // the gallery, same as the others do with their own thumb. Same for
+      // "branding mockup 3.png" — only exists in images/work 05, not
+      // duplicated into webcontent.
+      // Explicit layout here (an array entry = a paired row) instead of
+      // the auto full/pair/pair grouping other works use: 1-2-1-1, with
+      // logo innn + branding mockup 3 as the pair.
       "../images/work%2005/thumb.png",
-      "../images/webcontent%20/work%2005/logo%20innn-02-02.png",
+      [
+        "../images/webcontent%20/work%2005/logo%20innn-02-02.png",
+        "../images/work%2005/branding%20mockup%203.png"
+      ],
       "../images/webcontent%20/work%2005/w02%201.png",
       "../images/webcontent%20/work%2005/w02%202.png"
     ],
@@ -72,28 +80,49 @@
     gallery.appendChild(row);
   }
 
-  function buildGallery(alt, images) {
-    gallery.innerHTML = "";
+  // Turns a flat image list into groups (a string = a full-width row, an
+  // array of 2 = a paired half-width row): full, pair, full, pair... with
+  // a trailing remainder of exactly 2 paired up instead of split into two
+  // full-width rows in a row.
+  function autoGroup(images) {
+    var groups = [];
     var i = 0;
     while (i < images.length) {
       var remaining = images.length - i;
       if (remaining === 2) {
-        // Exactly 2 images left with no room for a "full" ahead of them —
-        // pair them up instead of stranding one as a second full-width
-        // image right after the previous one (looks like a mistake).
-        appendRow(images.slice(i, i + 2), alt);
+        groups.push(images.slice(i, i + 2));
         i += 2;
         continue;
       }
 
-      appendImg(gallery, images[i], alt);
+      groups.push(images[i]);
       i += 1;
 
       if (images.length - i >= 2) {
-        appendRow(images.slice(i, i + 2), alt);
+        groups.push(images.slice(i, i + 2));
         i += 2;
       }
     }
+    return groups;
+  }
+
+  function buildGallery(alt, items) {
+    gallery.innerHTML = "";
+    // A work's list is either plain image paths (auto-grouped into
+    // full/pair/pair) or already has some explicit paired rows baked in
+    // (an array entry) — in that case use it exactly as given.
+    var isExplicit = items.some(function (item) {
+      return Array.isArray(item);
+    });
+    var groups = isExplicit ? items : autoGroup(items);
+
+    groups.forEach(function (group) {
+      if (Array.isArray(group)) {
+        appendRow(group, alt);
+      } else {
+        appendImg(gallery, group, alt);
+      }
+    });
   }
 
   function openModalFor(card) {

@@ -298,6 +298,19 @@ a {
   width: clamp(90px, 9vw, 50px);
 }
 
+/* Home hero: intro paragraph and headline fade up together, in lockstep
+   (same duration, no stagger between them). */
+@keyframes hero-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .hero__intro {
   position: absolute;
   left: 3.4%;
@@ -311,7 +324,8 @@ a {
   font-weight: 500;
   font-size: clamp(14px, 1.15vw, 18px);
   line-height: 1.5;
-  transition: opacity 0.5s ease;
+  opacity: 0;
+  animation: hero-fade-up 0.8s ease forwards;
 }
 
 /* Home-only hero text. About/Work/Contact pages don't include these elements
@@ -725,23 +739,6 @@ a {
   margin: 0 0 28px;
 }
 
-.hero__intro.is-typing::after {
-  content: "|";
-  margin-left: 2px;
-  animation: intro-blink 0.9s step-end infinite;
-}
-
-@keyframes intro-blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-.scr {
-  color: var(--cream-text);
-  opacity: 0.55;
-}
-
 .hero__nav {
   position: absolute;
   inset: 0;
@@ -815,19 +812,24 @@ a {
 }
 
 /* subpages (about/work/contact) dock all three buttons into a top nav row
-   instead of scattering them over the flowers, like a real site header */
+   instead of scattering them over the flowers, like a real site header —
+   sitting in the right third of the page rather than centered. Since the
+   fly-in transition just morphs each button from its home position to
+   whatever position it finds here, moving these is also what relocates
+   the "flies in from Home" landing spot — no separate transition logic
+   to update. */
 .hero--sub .hero__navBtn--about {
-  left: 45%;
+  left: 68%;
   top: 4.5%;
 }
 
 .hero--sub .hero__navBtn--contact {
-  left: 69%;
+  left: 88%;
   top: 4.5%;
 }
 
 .hero--sub .hero__navBtn--work {
-  left: 57%;
+  left: 78%;
   top: 4.5%;
 }
 
@@ -863,7 +865,8 @@ a {
   font-size: clamp(30px, 4.6vw, 68px);
   line-height: 1.12;
   letter-spacing: -0.01em;
-  transition: opacity 0.5s ease;
+  opacity: 0;
+  animation: hero-fade-up 0.8s ease forwards;
 }
 
 @media (max-width: 900px) {
@@ -909,15 +912,15 @@ a {
   }
 
   .hero--sub .hero__navBtn--about {
-    left: 38%;
+    left: 55%;
   }
 
   .hero--sub .hero__navBtn--contact {
-    left: 74%;
+    left: 81%;
   }
 
   .hero--sub .hero__navBtn--work {
-    left: 55%;
+    left: 68%;
   }
 
   .contact__brand {
