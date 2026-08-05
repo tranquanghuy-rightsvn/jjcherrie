@@ -29,7 +29,7 @@
     return Math.max(min, Math.min(max, v));
   }
 
-  var BASE_TOP = 210;
+  var BASE_TOP = 280;
   var PEEK_RATIO = 0.2;
 
   function layoutStack() {
