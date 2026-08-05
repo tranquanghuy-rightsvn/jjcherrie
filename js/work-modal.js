@@ -15,10 +15,19 @@
   // thumbnail (its "subject" shot), then the rest of that work's assets.
   var WORK_IMAGES = [
     [
+      // w01 2/5/6 only exist in the main images/work 01 folder, not
+      // duplicated into webcontent — same pattern as work04/work05's
+      // extra assets. p01.jpg dropped per request.
+      // Explicit layout: w01_1 + w01_4 paired in one row, the rest each
+      // get their own full-width row.
       "../images/webcontent%20/work%2001/thumb.png",
-      "../images/webcontent%20/work%2001/p01.jpg",
-      "../images/webcontent%20/work%2001/w01%201.png",
-      "../images/webcontent%20/work%2001/w01%204.png",
+      [
+        "../images/webcontent%20/work%2001/w01%201.png",
+        "../images/webcontent%20/work%2001/w01%204.png"
+      ],
+      "../images/work%2001/w01%202.png",
+      "../images/work%2001/w01%205.png",
+      "../images/work%2001/w01%206.png",
       "../images/webcontent%20/work%2001/w01.png"
     ],
     [
